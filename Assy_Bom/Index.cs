@@ -94,7 +94,8 @@ namespace Assy_Bom
 
         private void dgv_model_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dgv_model.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+           if(e.RowIndex >= 0) { 
+             if (dgv_model.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
             {
                 dgv_model.CurrentRow.Selected = true;
                 txt_modelDesc_md.Text = txt_DesModel_ad.Text = dgv_model.Rows[e.RowIndex].Cells["MODEL_DESC"].FormattedValue.ToString().ToUpper();
@@ -107,6 +108,11 @@ namespace Assy_Bom
                 txt_standard_ad.Text = txt_standard_md.Text = dgv_model.Rows[e.RowIndex].Cells["STANDARD"].FormattedValue.ToString().ToUpper();
                 txt_StdPkg_ad.Text = txt_StdPkg_md.Text = dgv_model.Rows[e.RowIndex].Cells["STD_PKG_QTY"].FormattedValue.ToString().ToUpper();
                 cbb_model.Text = txt_model_ad.Text = dgv_model.Rows[e.RowIndex].Cells["MODEL_NAME"].FormattedValue.ToString().ToUpper();
+            }
+            }
+            else
+            {
+
             }
         }
         private void cbbChange()
@@ -161,15 +167,15 @@ namespace Assy_Bom
                 return false;
             }
         }
-        private bool intergerCheckAdd()
+        private bool intergerCheck(string text1, string text2)
         {
             int result;
-            if (!int.TryParse(txt_standard_ad.Text, out result) || !int.TryParse(txt_StdPkg_ad.Text, out result))
+            if (!int.TryParse(text1, out result) || !int.TryParse(text2, out result))
             {
                MessageBox.Show("Only interger Allowed");
                 return false;
             }
-            else if(Convert.ToInt32(txt_standard_ad.Text)<=0 || Convert.ToInt32(txt_StdPkg_ad.Text) <= 0)
+            else if(Convert.ToInt32(text1) <=0 || Convert.ToInt32(text2) <= 0)
             {
                 MessageBox.Show("Number must be positive");
                 return false;
@@ -179,11 +185,24 @@ namespace Assy_Bom
                 return true;
             }
         }
+
         private bool checkNullAdd()
         {
-            if (txt_model_ad.Text == "" || txt_CusModel_ad.Text == "" || txt_DesModel_ad.Text == "" || txt_CusSku_ad.Text == "" || txt_CusKp_ad.Text == "" || txt_CateSku_ad.Text == "" || txt_AbbSku_ad.Text == "" || txt_DesPart_ad.Text == "" || txt_standard_ad.Text == "" || txt_StdPkg_ad.Text == "")
+            if (txt_model_ad.Text == "" || txt_CusModel_ad.Text == "" || txt_DesModel_ad.Text == "" || txt_CusSku_ad.Text == "" || txt_CusKp_ad.Text == "" || txt_CateSku_ad.Text == "" || txt_DesPart_ad.Text == "" || txt_standard_ad.Text == "" || txt_StdPkg_ad.Text == "")
             {
                 
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        private bool checkNullMd()
+        {
+            if ( txt_CusModel_md.Text == "" || txt_modelDesc_md.Text == "" || txt_CusSku_md.Text == "" || txt_CusKp_md.Text == "" || txt_CateSku_md.Text == "" || txt_PartDesc_md.Text == "" || txt_standard_md.Text == "" || txt_StdPkg_md.Text == "")
+            {
+
                 return false;
             }
             else
@@ -224,7 +243,7 @@ namespace Assy_Bom
                 }
                 else 
                 {
-                    if (intergerCheckAdd() == true)
+                    if (intergerCheck(txt_standard_ad.Text,txt_StdPkg_ad.Text) == true)
                     {
                         InsertModel();
                     }
@@ -246,26 +265,28 @@ namespace Assy_Bom
         }
 //}
         private void addArray()
-                {    
-                        if (checkModelExist(cbb_model.Text) == true)
-                        {
+         {    
+             if (checkModelExist(cbb_model.Text) == true)
+             {
                 if (checkChanged() == true)
                 {
-                     updateModel();
+                    if (intergerCheck(txt_standard_md.Text, txt_StdPkg_md.Text) == true)
+                    {
+                        updateModel();
+                    }
+                    
                 }
                 else
                 {
                     MessageBox.Show("Nothing changed!!");
-                }
-                
-                        
-                        }
-                    else
-                    {
-                        MessageBox.Show("Model name is not exists, Please check again!");
+                }         
+             }
+            else
+             {
+                 MessageBox.Show("Model name is not exists, Please check again!");
                
-                    }
-                }
+             }
+        }
         private void InsertChange(string reason,int cell,string newData,string EmpID,string type)
         {
             try
@@ -381,9 +402,15 @@ namespace Assy_Bom
             //}
         }
 
-        private void dgv_model_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
 
+        private void dgv_model_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dgv_model.ReadOnly = true;
+        }
+
+        private void qUITToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

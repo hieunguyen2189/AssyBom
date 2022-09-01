@@ -304,6 +304,7 @@
             // 
             this.qUITToolStripMenuItem.Name = "qUITToolStripMenuItem";
             resources.ApplyResources(this.qUITToolStripMenuItem, "qUITToolStripMenuItem");
+            this.qUITToolStripMenuItem.Click += new System.EventHandler(this.qUITToolStripMenuItem_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -684,8 +685,7 @@
             this.dgv_model.Name = "dgv_model";
             this.dgv_model.RowTemplate.Height = 24;
             this.dgv_model.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_model_CellClick);
-            this.dgv_model.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgv_model_RowHeaderMouseClick);
-            // 
+            this.dgv_model.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_model_CellContentClick);            // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.Transparent;
