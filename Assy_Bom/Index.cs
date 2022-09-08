@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using ClosedXML.Excel;
 namespace Assy_Bom
 {
     public partial class form_index : Form
@@ -47,25 +49,26 @@ namespace Assy_Bom
             dgv_model.Columns[8].Width = 60;
             dgv_model.Columns[9].Width = 60;
         }
-        private void cbb_bind(){
+        private void cbb_bind()
+        {
 
-            foreach(DataRow dr in getListModel().Rows)
+            foreach (DataRow dr in getListModel().Rows)
             {
                 cbb_model.Items.Add(dr["MODEL_NAME"].ToString());
             }
 
         }
-       DataTable getAllModel()
+        DataTable getAllModel()
         {
             DataTable data = new DataTable();
-             string query = "SELECT model_name,customer_model,model_desc,sku_model customer_Sku, model_kp customer_kp, model_type_no sku_category,rev sku_abbreviation,part_desc panel_infomation,standard,std_pkg_qty  FROM sfis1.c_model_desc_t";
+            string query = "SELECT model_name,customer_model,model_desc,sku_model customer_Sku, model_kp customer_kp, model_type_no sku_category,rev sku_abbreviation,part_desc panel_infomation,standard,std_pkg_qty  FROM sfis1.c_model_desc_t";
             using (OracleConnection con = new OracleConnection(ConnectionString.ConnTest))
             {
                 con.Open();
                 OracleCommand Command = new OracleCommand(query, con);
                 OracleDataAdapter da = new OracleDataAdapter(Command);
                 da.Fill(data);
-                con.Close();   
+                con.Close();
             }
             return data;
         }
@@ -94,21 +97,22 @@ namespace Assy_Bom
 
         private void dgv_model_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-           if(e.RowIndex >= 0) { 
-             if (dgv_model.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+            if (e.RowIndex >= 0)
             {
-                dgv_model.CurrentRow.Selected = true;
-                txt_modelDesc_md.Text = txt_DesModel_ad.Text = dgv_model.Rows[e.RowIndex].Cells["MODEL_DESC"].FormattedValue.ToString().ToUpper();
-                txt_CusModel_md.Text=txt_CusModel_ad.Text= dgv_model.Rows[e.RowIndex].Cells["CUSTOMER_MODEL"].FormattedValue.ToString().ToUpper();
-                txt_CusSku_ad.Text = txt_CusSku_md.Text = dgv_model.Rows[e.RowIndex].Cells["CUSTOMER_SKU"].FormattedValue.ToString().ToUpper();
-                txt_CusKp_ad.Text = txt_CusKp_md.Text = dgv_model.Rows[e.RowIndex].Cells["CUSTOMER_KP"].FormattedValue.ToString().ToUpper();
-                txt_CateSku_ad.Text = txt_CateSku_md.Text = dgv_model.Rows[e.RowIndex].Cells["SKU_CATEGORY"].FormattedValue.ToString().ToUpper();
-                txt_AbbSku_ad.Text = txt_AbbSku_md.Text = dgv_model.Rows[e.RowIndex].Cells["SKU_ABBREVIATION"].FormattedValue.ToString().ToUpper();
-                txt_PartDesc_md.Text = txt_DesPart_ad.Text = dgv_model.Rows[e.RowIndex].Cells["PANEL_INFOMATION"].FormattedValue.ToString().ToUpper();
-                txt_standard_ad.Text = txt_standard_md.Text = dgv_model.Rows[e.RowIndex].Cells["STANDARD"].FormattedValue.ToString().ToUpper();
-                txt_StdPkg_ad.Text = txt_StdPkg_md.Text = dgv_model.Rows[e.RowIndex].Cells["STD_PKG_QTY"].FormattedValue.ToString().ToUpper();
-                cbb_model.Text = txt_model_ad.Text = dgv_model.Rows[e.RowIndex].Cells["MODEL_NAME"].FormattedValue.ToString().ToUpper();
-            }
+                if (dgv_model.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+                {
+                    dgv_model.CurrentRow.Selected = true;
+                    txt_modelDesc_md.Text = txt_DesModel_ad.Text = dgv_model.Rows[e.RowIndex].Cells["MODEL_DESC"].FormattedValue.ToString().ToUpper();
+                    txt_CusModel_md.Text = txt_CusModel_ad.Text = dgv_model.Rows[e.RowIndex].Cells["CUSTOMER_MODEL"].FormattedValue.ToString().ToUpper();
+                    txt_CusSku_ad.Text = txt_CusSku_md.Text = dgv_model.Rows[e.RowIndex].Cells["CUSTOMER_SKU"].FormattedValue.ToString().ToUpper();
+                    txt_CusKp_ad.Text = txt_CusKp_md.Text = dgv_model.Rows[e.RowIndex].Cells["CUSTOMER_KP"].FormattedValue.ToString().ToUpper();
+                    txt_CateSku_ad.Text = txt_CateSku_md.Text = dgv_model.Rows[e.RowIndex].Cells["SKU_CATEGORY"].FormattedValue.ToString().ToUpper();
+                    txt_AbbSku_ad.Text = txt_AbbSku_md.Text = dgv_model.Rows[e.RowIndex].Cells["SKU_ABBREVIATION"].FormattedValue.ToString().ToUpper();
+                    txt_PartDesc_md.Text = txt_DesPart_ad.Text = dgv_model.Rows[e.RowIndex].Cells["PANEL_INFOMATION"].FormattedValue.ToString().ToUpper();
+                    txt_standard_ad.Text = txt_standard_md.Text = dgv_model.Rows[e.RowIndex].Cells["STANDARD"].FormattedValue.ToString().ToUpper();
+                    txt_StdPkg_ad.Text = txt_StdPkg_md.Text = dgv_model.Rows[e.RowIndex].Cells["STD_PKG_QTY"].FormattedValue.ToString().ToUpper();
+                    cbb_model.Text = txt_model_ad.Text = dgv_model.Rows[e.RowIndex].Cells["MODEL_NAME"].FormattedValue.ToString().ToUpper();
+                }
             }
             else
             {
@@ -130,16 +134,16 @@ namespace Assy_Bom
             }
             dgv_model.DataSource = data;
             dgv_temp.DataSource = data;
-            txt_modelDesc_md.Text  = dgv_model.Rows[0].Cells["MODEL_DESC"].FormattedValue.ToString().ToUpper();
-            txt_CusModel_md.Text  = dgv_model.Rows[0].Cells["CUSTOMER_MODEL"].FormattedValue.ToString().ToUpper();
-           txt_CusSku_md.Text = dgv_model.Rows[0].Cells["CUSTOMER_SKU"].FormattedValue.ToString().ToUpper();
-           txt_CusKp_md.Text = dgv_model.Rows[0].Cells["CUSTOMER_KP"].FormattedValue.ToString().ToUpper();
-             txt_CateSku_md.Text = dgv_model.Rows[0].Cells["SKU_CATEGORY"].FormattedValue.ToString().ToUpper();
+            txt_modelDesc_md.Text = dgv_model.Rows[0].Cells["MODEL_DESC"].FormattedValue.ToString().ToUpper();
+            txt_CusModel_md.Text = dgv_model.Rows[0].Cells["CUSTOMER_MODEL"].FormattedValue.ToString().ToUpper();
+            txt_CusSku_md.Text = dgv_model.Rows[0].Cells["CUSTOMER_SKU"].FormattedValue.ToString().ToUpper();
+            txt_CusKp_md.Text = dgv_model.Rows[0].Cells["CUSTOMER_KP"].FormattedValue.ToString().ToUpper();
+            txt_CateSku_md.Text = dgv_model.Rows[0].Cells["SKU_CATEGORY"].FormattedValue.ToString().ToUpper();
             txt_AbbSku_md.Text = dgv_model.Rows[0].Cells["SKU_ABBREVIATION"].FormattedValue.ToString().ToUpper();
-            txt_PartDesc_md.Text  = dgv_model.Rows[0].Cells["PANEL_INFOMATION"].FormattedValue.ToString().ToUpper();
-             txt_standard_md.Text = dgv_model.Rows[0].Cells["STANDARD"].FormattedValue.ToString().ToUpper();
+            txt_PartDesc_md.Text = dgv_model.Rows[0].Cells["PANEL_INFOMATION"].FormattedValue.ToString().ToUpper();
+            txt_standard_md.Text = dgv_model.Rows[0].Cells["STANDARD"].FormattedValue.ToString().ToUpper();
             txt_StdPkg_md.Text = dgv_model.Rows[0].Cells["STD_PKG_QTY"].FormattedValue.ToString().ToUpper();
-           
+
         }
         private void cbb_model_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -172,10 +176,10 @@ namespace Assy_Bom
             int result;
             if (!int.TryParse(text1, out result) || !int.TryParse(text2, out result))
             {
-               MessageBox.Show("Only interger Allowed");
+                MessageBox.Show("Only interger Allowed");
                 return false;
             }
-            else if(Convert.ToInt32(text1) <=0 || Convert.ToInt32(text2) <= 0)
+            else if (Convert.ToInt32(text1) <= 0 || Convert.ToInt32(text2) <= 0)
             {
                 MessageBox.Show("Number must be positive");
                 return false;
@@ -190,7 +194,7 @@ namespace Assy_Bom
         {
             if (txt_model_ad.Text == "" || txt_CusModel_ad.Text == "" || txt_DesModel_ad.Text == "" || txt_CusSku_ad.Text == "" || txt_CusKp_ad.Text == "" || txt_CateSku_ad.Text == "" || txt_DesPart_ad.Text == "" || txt_standard_ad.Text == "" || txt_StdPkg_ad.Text == "")
             {
-                
+
                 return false;
             }
             else
@@ -200,7 +204,7 @@ namespace Assy_Bom
         }
         private bool checkNullMd()
         {
-            if ( txt_CusModel_md.Text == "" || txt_modelDesc_md.Text == "" || txt_CusSku_md.Text == "" || txt_CusKp_md.Text == "" || txt_CateSku_md.Text == "" || txt_PartDesc_md.Text == "" || txt_standard_md.Text == "" || txt_StdPkg_md.Text == "")
+            if (txt_CusModel_md.Text == "" || txt_modelDesc_md.Text == "" || txt_CusSku_md.Text == "" || txt_CusKp_md.Text == "" || txt_CateSku_md.Text == "" || txt_PartDesc_md.Text == "" || txt_standard_md.Text == "" || txt_StdPkg_md.Text == "")
             {
 
                 return false;
@@ -212,18 +216,19 @@ namespace Assy_Bom
         }
         private void InsertModel()
         {
-            try { 
-             string sqlstr1 = "insert into sfis1.c_model_desc_t (model_name,model_serial,model_type,bom_no,customer,customer_model,model_desc,sku_model,model_kp,model_type_no,rev,part_desc,product_desc,standard,std_pkg_qty) values ('"+txt_model_ad.Text+"','ASSY','1','" + txt_model_ad.Text + "','SONYVN','"+txt_CusModel_ad.Text+"','"+txt_DesModel_ad.Text + "','"+txt_CusSku_ad.Text + "','"+txt_CusKp_ad.Text + "','"+txt_CateSku_ad.Text + "','"+txt_AbbSku_ad.Text + "','"+txt_DesPart_ad.Text + "','CTB','"+txt_standard_ad.Text + "','"+txt_StdPkg_ad.Text + "')";
-            using (OracleConnection con = new OracleConnection(ConnectionString.ConnTest))
+            try
             {
-                con.Open();
-                OracleCommand Command = new OracleCommand(sqlstr1, con);
-                Command.ExecuteScalar();
-                con.Close();
-            }
+                string sqlstr1 = "insert into sfis1.c_model_desc_t (model_name,model_serial,model_type,bom_no,customer,customer_model,model_desc,sku_model,model_kp,model_type_no,rev,part_desc,product_desc,standard,std_pkg_qty) values ('" + txt_model_ad.Text + "','ASSY','1','" + txt_model_ad.Text + "','SONYVN','" + txt_CusModel_ad.Text + "','" + txt_DesModel_ad.Text + "','" + txt_CusSku_ad.Text + "','" + txt_CusKp_ad.Text + "','" + txt_CateSku_ad.Text + "','" + txt_AbbSku_ad.Text + "','" + txt_DesPart_ad.Text + "','CTB','" + txt_standard_ad.Text + "','" + txt_StdPkg_ad.Text + "')";
+                using (OracleConnection con = new OracleConnection(ConnectionString.ConnTest))
+                {
+                    con.Open();
+                    OracleCommand Command = new OracleCommand(sqlstr1, con);
+                    Command.ExecuteScalar();
+                    con.Close();
+                }
                 MessageBox.Show("Insert Successfull!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -241,20 +246,20 @@ namespace Assy_Bom
                 {
                     MessageBox.Show("" + txt_model_ad.Text + " already exists! Please try again");
                 }
-                else 
+                else
                 {
-                    if (intergerCheck(txt_standard_ad.Text,txt_StdPkg_ad.Text) == true)
+                    if (intergerCheck(txt_standard_ad.Text, txt_StdPkg_ad.Text) == true)
                     {
                         InsertModel();
                     }
                 }
 
             }
-           
+
         }
         private void clean()
         {
-            txt_modelDesc_md.Text = txt_DesModel_ad.Text = txt_CusModel_md.Text = txt_CusModel_ad.Text = txt_CusSku_ad.Text = txt_CusSku_md.Text = txt_CusKp_ad.Text = txt_CusKp_md.Text = txt_CateSku_ad.Text = txt_CateSku_md.Text = txt_AbbSku_ad.Text = txt_AbbSku_md.Text = txt_PartDesc_md.Text = txt_DesPart_ad.Text  = txt_model_ad.Text = "";
+            txt_modelDesc_md.Text = txt_DesModel_ad.Text = txt_CusModel_md.Text = txt_CusModel_ad.Text = txt_CusSku_ad.Text = txt_CusSku_md.Text = txt_CusKp_ad.Text = txt_CusKp_md.Text = txt_CateSku_ad.Text = txt_CateSku_md.Text = txt_AbbSku_ad.Text = txt_AbbSku_md.Text = txt_PartDesc_md.Text = txt_DesPart_ad.Text = txt_model_ad.Text = "";
             cbb_model.Text = "";
             defaultValue();
             dgv_bind();
@@ -263,35 +268,35 @@ namespace Assy_Bom
         {
             clean();
         }
-//}
+        //}
         private void addArray()
-         {    
-             if (checkModelExist(cbb_model.Text) == true)
-             {
+        {
+            if (checkModelExist(cbb_model.Text) == true)
+            {
                 if (checkChanged() == true)
                 {
                     if (intergerCheck(txt_standard_md.Text, txt_StdPkg_md.Text) == true)
                     {
                         updateModel();
                     }
-                    
+
                 }
                 else
                 {
                     MessageBox.Show("Nothing changed!!");
-                }         
-             }
+                }
+            }
             else
-             {
-                 MessageBox.Show("Model name is not exists, Please check again!");
-               
-             }
+            {
+                MessageBox.Show("Model name is not exists, Please check again!");
+
+            }
         }
-        private void InsertChange(string reason,int cell,string newData,string EmpID,string type)
+        private void InsertChange(string reason, int cell, string newData, string EmpID, string type)
         {
             try
             {
-                string query = "INSERT INTO SFISM4.R_ASSY_BOM_MODIFY_RECORD_T (MODEL_NAME,MODIFY_SECTION,OLD_DATA,NEW_DATA,MODIFIER,MODIFY_TYPE,INSERT_TIME) VALUES ('" + cbb_model.Text + "','" + reason +"','"+ dgv_model.Rows[0].Cells[cell].FormattedValue.ToString() + "','"+newData+ "','" + EmpID + "','" + type + "',sysdate)";
+                string query = "INSERT INTO SFISM4.R_ASSY_BOM_MODIFY_RECORD_T (MODEL_NAME,MODIFY_SECTION,OLD_DATA,NEW_DATA,MODIFIER,MODIFY_TYPE,INSERT_TIME) VALUES ('" + cbb_model.Text + "','" + reason + "','" + dgv_model.Rows[0].Cells[cell].FormattedValue.ToString() + "','" + newData + "','" + EmpID + "','" + type + "',sysdate)";
                 using (OracleConnection con = new OracleConnection(ConnectionString.ConnTest))
                 {
                     con.Open();
@@ -305,13 +310,13 @@ namespace Assy_Bom
                 MessageBox.Show(ex.Message);
             }
         }
-      private bool checkChanged()
+        private bool checkChanged()
         {
             string flag = "";
             string EmpNo = "V0513581";
-            if (dgv_model.Rows[0].Cells["CUSTOMER_MODEL"].FormattedValue.ToString().ToUpper()!=txt_CusModel_md.Text)
+            if (dgv_model.Rows[0].Cells["CUSTOMER_MODEL"].FormattedValue.ToString().ToUpper() != txt_CusModel_md.Text)
             {
-                InsertChange("CUSTOMER_MODEL",1,txt_CusModel_md.Text,EmpNo, "MODELMODIFY");
+                InsertChange("CUSTOMER_MODEL", 1, txt_CusModel_md.Text, EmpNo, "MODELMODIFY");
                 flag = "1";
             }
             if (dgv_model.Rows[0].Cells["MODEL_DESC"].FormattedValue.ToString().ToUpper() != txt_modelDesc_md.Text)
@@ -336,7 +341,7 @@ namespace Assy_Bom
             }
             if (dgv_model.Rows[0].Cells["SKU_ABBREVIATION"].FormattedValue.ToString().ToUpper() != txt_AbbSku_md.Text)
             {
-                InsertChange("SKU_ABBREVIATION",6, txt_AbbSku_md.Text, EmpNo, "STANDARDMODIFY");
+                InsertChange("SKU_ABBREVIATION", 6, txt_AbbSku_md.Text, EmpNo, "STANDARDMODIFY");
                 flag = "1";
             }
             if (dgv_model.Rows[0].Cells["PANEL_INFOMATION"].FormattedValue.ToString().ToUpper() != txt_PartDesc_md.Text)
@@ -346,12 +351,12 @@ namespace Assy_Bom
             }
             if (dgv_model.Rows[0].Cells["STANDARD"].FormattedValue.ToString().ToUpper() != txt_standard_md.Text)
             {
-                InsertChange("STANDARD",8, txt_standard_md.Text, EmpNo, "STDPKPQTYMODIFY");
+                InsertChange("STANDARD", 8, txt_standard_md.Text, EmpNo, "STDPKPQTYMODIFY");
                 flag = "1";
             }
             if (dgv_model.Rows[0].Cells["STD_PKG_QTY"].FormattedValue.ToString().ToUpper() != txt_StdPkg_md.Text)
             {
-                InsertChange("STD_PKG_QTY",9, txt_StdPkg_md.Text, EmpNo, "STDPKPQTYMODIFY");
+                InsertChange("STD_PKG_QTY", 9, txt_StdPkg_md.Text, EmpNo, "STDPKPQTYMODIFY");
                 flag = "1";
             }
 
@@ -363,13 +368,13 @@ namespace Assy_Bom
             {
                 return false;
             }
-            }
+        }
         private void updateModel()
         {
-            
+
             try
             {
-                string query = "UPDATE sfis1.c_model_desc_t set customer_model='" + txt_CusModel_md.Text + "',model_desc='" + txt_modelDesc_md.Text + "',sku_model='" + txt_CusSku_md.Text + "',model_kp='" + txt_CusKp_md.Text + "',model_type_no='" + txt_CateSku_md.Text + "',rev='" + txt_AbbSku_md.Text + "',part_desc='" + txt_PartDesc_md.Text + "',standard='" + txt_standard_md.Text + "',std_pkg_qty='" + txt_StdPkg_md.Text + "' where model_name = '"+cbb_model.Text+"'";
+                string query = "UPDATE sfis1.c_model_desc_t set customer_model='" + txt_CusModel_md.Text + "',model_desc='" + txt_modelDesc_md.Text + "',sku_model='" + txt_CusSku_md.Text + "',model_kp='" + txt_CusKp_md.Text + "',model_type_no='" + txt_CateSku_md.Text + "',rev='" + txt_AbbSku_md.Text + "',part_desc='" + txt_PartDesc_md.Text + "',standard='" + txt_standard_md.Text + "',std_pkg_qty='" + txt_StdPkg_md.Text + "' where model_name = '" + cbb_model.Text + "'";
                 using (OracleConnection con = new OracleConnection(ConnectionString.ConnTest))
                 {
                     con.Open();
@@ -411,6 +416,78 @@ namespace Assy_Bom
         private void qUITToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            saveExcel();
+        }
+        private void saveExcel()
+        {
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.DefaultExt = "xlsx";
+            saveFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx |All files (*.*)|*.*";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string execPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                var filePath = Path.Combine(execPath, "Template.xlsx");
+                Microsoft.Office.Interop.Excel.Application app = new Microsoft.Office.Interop.Excel.Application();
+                Microsoft.Office.Interop.Excel.Workbook book = app.Workbooks.Open(filePath);
+                book.SaveAs(saveFileDialog.FileName); 
+                book.Close();
+                MessageBox.Show("Save successful!, " + saveFileDialog.FileName);
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            OpenFileDialogForm();
+        }
+        public void OpenFileDialogForm()
+        {
+            openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "Excel Worksheets|*.xlsx";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                
+                dataGridView4.DataSource = ImportExceltoDatatable(openFileDialog1.FileName, "Sheet1");
+              
+            }
+        }
+        public static DataTable ImportExceltoDatatable(string filePath, string sheetName)
+        {
+
+            using (XLWorkbook workBook = new XLWorkbook(filePath))
+            {
+                IXLWorksheet workSheet = workBook.Worksheet(1);
+                DataTable dt = new DataTable();
+                bool firstRow = true;
+                foreach (IXLRow row in workSheet.Rows())
+                {
+                    if (firstRow)
+                    {
+                        foreach (IXLCell cell in row.Cells())
+                        {
+                            dt.Columns.Add(cell.Value.ToString());
+                        }
+                        firstRow = false;
+                    }
+                    else
+                    {
+                        dt.Rows.Add();
+                        int i = 0;
+                        if (row.Cell(1).GetString() != "" && row.Cell(2).GetString() != "" && row.Cell(3).GetString() != "" && row.Cell(4).GetString() != "" && row.Cell(5).GetString() != "" && row.Cell(6).GetString() != "")  {
+                            foreach (IXLCell cell in row.Cells(row.FirstCellUsed().Address.ColumnNumber, row.LastCellUsed().Address.ColumnNumber))
+                            {
+                                dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
+                                i++;
+                            }
+                        }
+                    }
+                }
+
+                return dt;
+            }
         }
     }
 }

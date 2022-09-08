@@ -194,13 +194,6 @@
             this.tableLayoutPanel27 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.dataGridView4 = new System.Windows.Forms.DataGridView();
-            this.no = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.kp_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.kp_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.kp_relation3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.group_name2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.show_group = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.version_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel28 = new System.Windows.Forms.TableLayoutPanel();
             this.label48 = new System.Windows.Forms.Label();
             this.label47 = new System.Windows.Forms.Label();
@@ -212,6 +205,7 @@
             this.button13 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -685,7 +679,8 @@
             this.dgv_model.Name = "dgv_model";
             this.dgv_model.RowTemplate.Height = 24;
             this.dgv_model.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_model_CellClick);
-            this.dgv_model.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_model_CellContentClick);            // 
+            this.dgv_model.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_model_CellContentClick);
+            // 
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.Color.Transparent;
@@ -1345,53 +1340,13 @@
             // 
             // dataGridView4
             // 
+            this.dataGridView4.AllowUserToAddRows = false;
+            this.dataGridView4.AllowUserToDeleteRows = false;
+            this.dataGridView4.AllowUserToResizeRows = false;
             this.dataGridView4.BackgroundColor = System.Drawing.SystemColors.ActiveCaption;
             this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView4.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.no,
-            this.kp_no,
-            this.kp_name,
-            this.kp_relation3,
-            this.group_name2,
-            this.show_group,
-            this.version_code});
             resources.ApplyResources(this.dataGridView4, "dataGridView4");
             this.dataGridView4.Name = "dataGridView4";
-            // 
-            // no
-            // 
-            resources.ApplyResources(this.no, "no");
-            this.no.Name = "no";
-            // 
-            // kp_no
-            // 
-            resources.ApplyResources(this.kp_no, "kp_no");
-            this.kp_no.Name = "kp_no";
-            // 
-            // kp_name
-            // 
-            resources.ApplyResources(this.kp_name, "kp_name");
-            this.kp_name.Name = "kp_name";
-            // 
-            // kp_relation3
-            // 
-            resources.ApplyResources(this.kp_relation3, "kp_relation3");
-            this.kp_relation3.Name = "kp_relation3";
-            // 
-            // group_name2
-            // 
-            resources.ApplyResources(this.group_name2, "group_name2");
-            this.group_name2.Name = "group_name2";
-            // 
-            // show_group
-            // 
-            resources.ApplyResources(this.show_group, "show_group");
-            this.show_group.Name = "show_group";
-            // 
-            // version_code
-            // 
-            resources.ApplyResources(this.version_code, "version_code");
-            this.version_code.Name = "version_code";
             // 
             // tableLayoutPanel28
             // 
@@ -1453,6 +1408,7 @@
             this.button13.BackColor = System.Drawing.Color.WhiteSmoke;
             this.button13.Name = "button13";
             this.button13.UseVisualStyleBackColor = false;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // button14
             // 
@@ -1467,6 +1423,12 @@
             this.button15.BackColor = System.Drawing.Color.WhiteSmoke;
             this.button15.Name = "button15";
             this.button15.UseVisualStyleBackColor = false;
+            this.button15.Click += new System.EventHandler(this.button15_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            resources.ApplyResources(this.openFileDialog1, "openFileDialog1");
             // 
             // form_index
             // 
@@ -1712,13 +1674,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel27;
         private System.Windows.Forms.GroupBox groupBox9;
         private System.Windows.Forms.DataGridView dataGridView4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn no;
-        private System.Windows.Forms.DataGridViewTextBoxColumn kp_no;
-        private System.Windows.Forms.DataGridViewTextBoxColumn kp_name;
-        private System.Windows.Forms.DataGridViewTextBoxColumn kp_relation3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn group_name2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn show_group;
-        private System.Windows.Forms.DataGridViewTextBoxColumn version_code;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel28;
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.Label label47;
@@ -1733,6 +1688,7 @@
         private System.Windows.Forms.Button btn_bind;
         private System.Windows.Forms.TextBox txt_model_ad;
         private System.Windows.Forms.DataGridView dgv_temp;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

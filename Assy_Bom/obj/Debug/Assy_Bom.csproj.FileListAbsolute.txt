@@ -42,3 +42,10 @@ U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\System.Text.Json.xml
 U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\System.Threading.Tasks.Extensions.xml
 U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\System.ValueTuple.xml
 U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\obj\Debug\Assy_Bom.csproj.CopyComplete
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\ClosedXML.dll
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\DocumentFormat.OpenXml.dll
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\ExcelNumberFormat.dll
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\ClosedXML.pdb
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\ClosedXML.xml
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\DocumentFormat.OpenXml.xml
+U:\TRSH-PROGRAM\Assy_Bom\Assy_Bom\bin\Debug\ExcelNumberFormat.xml
