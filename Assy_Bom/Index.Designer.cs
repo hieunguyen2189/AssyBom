@@ -201,10 +201,10 @@
             this.label50 = new System.Windows.Forms.Label();
             this.tableLayoutPanel29 = new System.Windows.Forms.TableLayoutPanel();
             this.label46 = new System.Windows.Forms.Label();
-            this.comboBox14 = new System.Windows.Forms.ComboBox();
             this.button13 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -1385,22 +1385,16 @@
             // 
             resources.ApplyResources(this.tableLayoutPanel29, "tableLayoutPanel29");
             this.tableLayoutPanel29.Controls.Add(this.label46, 0, 0);
-            this.tableLayoutPanel29.Controls.Add(this.comboBox14, 1, 0);
             this.tableLayoutPanel29.Controls.Add(this.button13, 3, 0);
             this.tableLayoutPanel29.Controls.Add(this.button14, 4, 0);
             this.tableLayoutPanel29.Controls.Add(this.button15, 2, 0);
+            this.tableLayoutPanel29.Controls.Add(this.textBox1, 1, 0);
             this.tableLayoutPanel29.Name = "tableLayoutPanel29";
             // 
             // label46
             // 
             resources.ApplyResources(this.label46, "label46");
             this.label46.Name = "label46";
-            // 
-            // comboBox14
-            // 
-            resources.ApplyResources(this.comboBox14, "comboBox14");
-            this.comboBox14.FormattingEnabled = true;
-            this.comboBox14.Name = "comboBox14";
             // 
             // button13
             // 
@@ -1416,6 +1410,7 @@
             this.button14.BackColor = System.Drawing.Color.WhiteSmoke;
             this.button14.Name = "button14";
             this.button14.UseVisualStyleBackColor = false;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
             // 
             // button15
             // 
@@ -1424,6 +1419,11 @@
             this.button15.Name = "button15";
             this.button15.UseVisualStyleBackColor = false;
             this.button15.Click += new System.EventHandler(this.button15_Click);
+            // 
+            // textBox1
+            // 
+            resources.ApplyResources(this.textBox1, "textBox1");
+            this.textBox1.Name = "textBox1";
             // 
             // openFileDialog1
             // 
@@ -1681,7 +1681,6 @@
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel29;
         private System.Windows.Forms.Label label46;
-        private System.Windows.Forms.ComboBox comboBox14;
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
@@ -1689,6 +1688,7 @@
         private System.Windows.Forms.TextBox txt_model_ad;
         private System.Windows.Forms.DataGridView dgv_temp;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

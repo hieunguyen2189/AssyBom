@@ -433,15 +433,16 @@ namespace Assy_Bom
                 var filePath = Path.Combine(execPath, "Template.xlsx");
                 Microsoft.Office.Interop.Excel.Application app = new Microsoft.Office.Interop.Excel.Application();
                 Microsoft.Office.Interop.Excel.Workbook book = app.Workbooks.Open(filePath);
-                book.SaveAs(saveFileDialog.FileName); 
+                book.SaveAs(saveFileDialog.FileName);
                 book.Close();
-                MessageBox.Show("Save successful!, " + saveFileDialog.FileName);
+                MessageBox.Show("Save success!Save location is: , " + saveFileDialog.FileName);
             }
         }
 
         private void button13_Click(object sender, EventArgs e)
         {
             OpenFileDialogForm();
+            button14.Enabled = true;
         }
         public void OpenFileDialogForm()
         {
@@ -449,45 +450,252 @@ namespace Assy_Bom
             openFileDialog1.Filter = "Excel Worksheets|*.xlsx";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                
+
                 dataGridView4.DataSource = ImportExceltoDatatable(openFileDialog1.FileName, "Sheet1");
-              
             }
         }
         public static DataTable ImportExceltoDatatable(string filePath, string sheetName)
         {
-
-            using (XLWorkbook workBook = new XLWorkbook(filePath))
-            {
-                IXLWorksheet workSheet = workBook.Worksheet(1);
-                DataTable dt = new DataTable();
-                bool firstRow = true;
-                foreach (IXLRow row in workSheet.Rows())
+            try {
+                using (XLWorkbook workBook = new XLWorkbook(filePath))
                 {
-                    if (firstRow)
+                    IXLWorksheet workSheet = workBook.Worksheet(1);
+                    DataTable dt = new DataTable();
+                    bool firstRow = true;
+                    int flag = 0;
+                    foreach (IXLRow row in workSheet.Rows())
                     {
-                        foreach (IXLCell cell in row.Cells())
+                        if (firstRow)
                         {
-                            dt.Columns.Add(cell.Value.ToString());
-                        }
-                        firstRow = false;
-                    }
-                    else
-                    {
-                        dt.Rows.Add();
-                        int i = 0;
-                        if (row.Cell(1).GetString() != "" && row.Cell(2).GetString() != "" && row.Cell(3).GetString() != "" && row.Cell(4).GetString() != "" && row.Cell(5).GetString() != "" && row.Cell(6).GetString() != "")  {
-                            foreach (IXLCell cell in row.Cells(row.FirstCellUsed().Address.ColumnNumber, row.LastCellUsed().Address.ColumnNumber))
+                            foreach (IXLCell cell in row.Cells())
                             {
-                                dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
-                                i++;
+                                dt.Columns.Add(cell.Value.ToString());
+                            }
+                            firstRow = false;
+                        }
+                        else
+                        {
+                            dt.Rows.Add();
+                            int i = 0;
+                            if (row.Cell(1).GetString() != "" && row.Cell(2).GetString() != "" && row.Cell(3).GetString() != "" && row.Cell(4).GetString() != "" && row.Cell(5).GetString() != "" && row.Cell(6).GetString() != "") {
+                                foreach (IXLCell cell in row.Cells(row.FirstCellUsed().Address.ColumnNumber, row.LastCellUsed().Address.ColumnNumber))
+                                {
+                                    dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
+                                    i++;
+                                }
+                                flag = 1;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Null data!");
+                                flag = 0;
+                                break;
                             }
                         }
                     }
-                }
-
-                return dt;
+                    if (flag == 1) {
+                        return dt;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                } 
             }
+            catch
+            {
+                MessageBox.Show("Please save and close your excel file!");
+                return null;
+            }
+            }
+        //Return false => not exists, return true => exists 
+        private bool checkBomKp()
+        {
+            string StrQuery;
+            using (OracleConnection conn = new OracleConnection(ConnectionString.ConnTest))
+            {
+                using (OracleCommand comm = new OracleCommand())
+                {
+                    comm.Connection = conn;
+                    conn.Open();
+                    StrQuery = @"SELECT COUNT(*) FROM SFIS1.C_BOM_KEYPART_T WHERE BOM_NO = '" + dataGridView4.Rows[0].Cells[0].Value.ToString().ToUpper() + "'";
+                    comm.CommandText = StrQuery;
+                    var result = comm.ExecuteScalar().ToString();
+                    conn.Close();
+                    if (result == "0" )
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        private bool checkBomDesc()
+        {
+            string StrQuery;
+            using (OracleConnection conn = new OracleConnection(ConnectionString.ConnTest))
+            {
+                using (OracleCommand comm = new OracleCommand())
+                {
+                    comm.Connection = conn;
+                    conn.Open();
+                    StrQuery = @"SELECT COUNT(*) FROM  SFIS1.C_MODEL_DESC_T WHERE MODEL_NAME = '" + dataGridView4.Rows[0].Cells[0].Value.ToString().ToUpper() + "'";
+                    comm.CommandText = StrQuery;
+                    var result = comm.ExecuteScalar().ToString();
+                    conn.Close();
+                    if (result == "0")
+                    {
+                        //return false;
+                        MessageBox.Show("No data, Please create the new Model as " + dataGridView4.Rows[0].Cells[0].Value.ToString().ToUpper());
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+            private bool checkKpDesc(DataGridView dgv)
+            {
+                string StrQuery;
+            int flag = 0;
+                using (OracleConnection conn = new OracleConnection(ConnectionString.ConnTest))
+                {
+                    using (OracleCommand comm = new OracleCommand())
+                    {
+                        comm.Connection = conn;
+                        conn.Open();
+                    for(int i = 0; i < dgv.Rows.Count; i++)
+                    {
+                        StrQuery = @"SELECT COUNT(*) FROM  SFIS1.C_KEYPARTS_DESC_T WHERE KEY_PART_NO = '" + dataGridView4.Rows[i].Cells[2].Value.ToString().ToUpper() + "'";
+                        comm.CommandText = StrQuery;
+                        var result = comm.ExecuteScalar().ToString();
+                        if (result == "0")
+                        {
+                            flag = 1;
+                        }
+                    }
+                    conn.Close();
+
+                }
+                }
+            if (flag == 1)
+            {
+                MessageBox.Show("New key_part_no without key_part informations!");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+            }
+
+            private void insertData(DataGridView dgv)
+        {
+            string StrQuery;
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(ConnectionString.ConnTest))
+                {
+                    using (OracleCommand comm = new OracleCommand())
+                    {
+                        comm.Connection = conn;
+                        conn.Open();
+                        for (int i = 0; i < dgv.Rows.Count; i++)
+                        {
+                            StrQuery = @"INSERT INTO SFIS1.C_BOM_KEYPART_T (BOM_NO,KEY_PART_NO,SHOW_GROUP,KP_RELATION,KP_COUNT,GROUP_NAME,VERSION_CODE) VALUES ('" + dgv.Rows[i].Cells[0].Value.ToString().ToUpper() + "','" + dgv.Rows[i].Cells[1].Value.ToString().ToUpper() + "','" + dgv.Rows[i].Cells[2].Value.ToString().ToUpper() + "','" + dgv.Rows[i].Cells[3].Value.ToString().ToUpper() + "','" + dgv.Rows[i].Cells[4].Value.ToString().ToUpper() + "','" + dgv.Rows[i].Cells[5].Value.ToString().ToUpper() + "','" + dgv.Rows[i].Cells[6].Value.ToString().ToUpper() + "')";
+                            comm.CommandText = StrQuery;
+                            comm.ExecuteNonQuery();
+                        }
+                        conn.Close();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        private bool checkData(DataGridView dgv)
+        {
+            int flag=0;
+            for (int i = 0; i < dgv.Rows.Count-1; i++)
+            {
+                for (int j = 1; j < dgv.Rows.Count; j++)
+                {
+                    if(dgv.Rows[i].Cells[0].Value.ToString().ToUpper() != dgv.Rows[j].Cells[0].Value.ToString().ToUpper())
+                    {
+                        flag = 1;
+                        break;
+                    }
+                }
+            }  
+                if (flag == 1)
+                {
+                    MessageBox.Show("Not the same BOM_NO!");
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+        }
+        private void deleteData()
+        {
+            string StrQuery;
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(ConnectionString.ConnTest))
+                {
+                    using (OracleCommand comm = new OracleCommand())
+                    {
+                        comm.Connection = conn;
+                        conn.Open();
+                            StrQuery = @"DELETE SFIS1.C_BOM_KEYPART_T WHERE BOM_NO = '" + dataGridView4.Rows[0].Cells[0].Value.ToString().ToUpper() + "'";
+                            comm.CommandText = StrQuery;
+                            comm.ExecuteNonQuery();
+                        conn.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        private void button14_Click(object sender, EventArgs e)
+        {
+            if (checkData(dataGridView4) == true) {
+              if (checkBomDesc() == true)
+                {
+                   // if (checkKpDesc(dataGridView4) == true)
+                   // {
+                        if (checkBomKp() == true)
+                        {
+                            DialogResult dialogResult = MessageBox.Show("Do you want to replace?", "Bom_no already existed!", MessageBoxButtons.YesNo);
+                            if (dialogResult == DialogResult.Yes)
+                            {
+
+                                deleteData();
+                                insertData(dataGridView4);
+                                MessageBox.Show("BOM is reimport successfully!!");
+                            }
+                        }
+                        else
+                        {
+                            insertData(dataGridView4);
+                            MessageBox.Show("BOM is imported successfully!!");
+                        }
+                    }
+                //}
+                
+            }
+            
         }
     }
 }
